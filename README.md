@@ -220,7 +220,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🎉 Acknowledgments
 
-- Team members: Hasan, Iwan, Kazim, Isil, Michal, Hammad, Dimy, Tim, Reald
+- Team members
 - Built with React, Vite, Express, and lots of ☕
 - Powered by OpenAI's GPT-4 for creative mic-drop reasons
 
