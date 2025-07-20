@@ -5,15 +5,17 @@ const STORAGE_KEY = 'mic-presenter-rotation';
 export const usePresenterRotation = (allPresenters) => {
   const [availablePresenters, setAvailablePresenters] = useState([]);
   const [usedPresenters, setUsedPresenters] = useState([]);
+  const [lastPresenter, setLastPresenter] = useState(null);
 
   // Load state from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        const { available, used } = JSON.parse(saved);
+        const { available, used, last } = JSON.parse(saved);
         setAvailablePresenters(available);
         setUsedPresenters(used);
+        setLastPresenter(last);
       } catch (error) {
         console.error('Failed to load presenter rotation state:', error);
         resetToInitialState();
@@ -27,24 +29,37 @@ export const usePresenterRotation = (allPresenters) => {
   useEffect(() => {
     const state = {
       available: availablePresenters,
-      used: usedPresenters
+      used: usedPresenters,
+      last: lastPresenter
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [availablePresenters, usedPresenters]);
+  }, [availablePresenters, usedPresenters, lastPresenter]);
 
   const resetToInitialState = () => {
     setAvailablePresenters([...allPresenters]);
     setUsedPresenters([]);
+    setLastPresenter(null);
   };
 
   const selectPresenter = () => {
     if (availablePresenters.length === 0) return null;
     
-    const randomIndex = Math.floor(Math.random() * availablePresenters.length);
-    const selectedPresenter = availablePresenters[randomIndex];
+    // Filter out the last presenter to prevent consecutive presentations
+    const eligiblePresenters = lastPresenter 
+      ? availablePresenters.filter(presenter => presenter !== lastPresenter)
+      : availablePresenters;
     
-    setAvailablePresenters(prev => prev.filter((_, index) => index !== randomIndex));
+    // If all remaining presenters are the same as last presenter,
+    // we have to allow them (happens when only one presenter is left)
+    const selectFrom = eligiblePresenters.length > 0 ? eligiblePresenters : availablePresenters;
+    
+    const randomIndex = Math.floor(Math.random() * selectFrom.length);
+    const selectedPresenter = selectFrom[randomIndex];
+    
+    // Remove from available and add to used
+    setAvailablePresenters(prev => prev.filter(p => p !== selectedPresenter));
     setUsedPresenters(prev => [...prev, selectedPresenter]);
+    setLastPresenter(selectedPresenter);
     
     return selectedPresenter;
   };
@@ -65,6 +80,7 @@ export const usePresenterRotation = (allPresenters) => {
   return {
     availablePresenters,
     usedPresenters,
+    lastPresenter,
     selectPresenter,
     skipPresenter,
     resetRotation,

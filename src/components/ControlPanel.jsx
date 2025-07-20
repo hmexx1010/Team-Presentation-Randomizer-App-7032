@@ -3,15 +3,9 @@ import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 
-const { FiRefreshCw, FiSkipForward, FiUsers, FiCheck } = FiIcons;
+const { FiRefreshCw, FiSkipForward, FiUsers, FiCheck, FiInfo } = FiIcons;
 
-const ControlPanel = ({ 
-  availablePresenters, 
-  usedPresenters, 
-  onReset, 
-  onSkip, 
-  isComplete 
-}) => {
+const ControlPanel = ({ availablePresenters, usedPresenters, onReset, onSkip, isComplete }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
@@ -26,11 +20,12 @@ const ControlPanel = ({
             {isComplete ? 'Round Complete!' : `${availablePresenters.length} remaining`}
           </span>
         </div>
-        
         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-          <div 
+          <div
             className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(usedPresenters.length / (usedPresenters.length + availablePresenters.length)) * 100}%` }}
+            style={{
+              width: `${(usedPresenters.length / (usedPresenters.length + availablePresenters.length)) * 100}%`
+            }}
           />
         </div>
       </div>
@@ -43,7 +38,7 @@ const ControlPanel = ({
         </h3>
         <div className="space-y-2 max-h-40 overflow-y-auto">
           {availablePresenters.map((presenter) => (
-            <div 
+            <div
               key={presenter}
               className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-3"
             >
@@ -77,7 +72,7 @@ const ControlPanel = ({
           </h3>
           <div className="space-y-2 max-h-32 overflow-y-auto">
             {usedPresenters.map((presenter) => (
-              <div 
+              <div
                 key={presenter}
                 className="flex items-center bg-green-50 dark:bg-green-900/20 rounded-lg p-3"
               >
